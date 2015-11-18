@@ -106,10 +106,6 @@ class.ts <- c(rep('cyberpunk', as.numeric(num.test['cyberpunk'])),
            )
 df <- cbind(df, class)
 
-#==**KNN**=====================================================
-#generating training data for KNN clasifier
-#test and training vectors must have the same size
-
 last.col <- ncol(df) - 1
 
 dtm.tr <- df[1 : (as.numeric(num.train["cyberpunk"])    +

@@ -162,7 +162,8 @@ class.ts <- df[(as.numeric(num.train["cyberpunk"])          +
 bayes <- naiveBayes(dtm.tr, class.tr)
 #bayes <- naiveBayes(class.tr~.,data=dtm.tr)
 
-predictions <- predict(bayes, newdata=dtm.ts, type="class")
+#predictions <- predict(bayes, newdata=dtm.ts, type="class")
+predictions <- predict(object=bayes, newdata=dtm.ts, type = "class", threshold = 0.1)
 
 predict(bayes, "trains",type="class")
 
