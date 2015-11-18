@@ -61,6 +61,10 @@ tm <- tm_map(tm, content_transformer(tolower))
 tm <- tm_map(tm, removePunctuation)
 tm <- tm_map(tm, stripWhitespace)
 tm <- tm_map(tm, removeNumbers)
+#dat <- readLines("stop_pt.txt")
+#tm <- tm_map(tm, removeWords, dat)
+#rm(dat)
+tm <- tm_map(tm, removeWords, stopwords("portuguese"))
 dat <- readLines("/home/jawa/Downloads/d/erik-08-11.2/stop.txt")
 tm<- tm_map(tm, removeWords, dat)
 tm<- tm_map(tm, removeWords, c("deleted"))
@@ -97,10 +101,6 @@ class.ts <- c(rep('cyberpunk', as.numeric(num.test['cyberpunk'])),
               rep('thepiratebay', as.numeric(num.test['thepiratebay']))
 )
 df <- cbind(df, class)
-
-#==**KNN**=====================================================
-#generating training data for KNN clasifier
-#test and training vectors must have the same size
 
 last.col <- ncol(df) - 1
 
@@ -160,8 +160,11 @@ class.ts <- df[(as.numeric(num.train["cyberpunk"])          +
                 ), last.col + 1]
 
 bayes <- naiveBayes(dtm.tr, class.tr)
+#bayes <- naiveBayes(class.tr~.,data=dtm.tr)
 
-predictions <- predict(bayes, dtm.ts, type="class")
+predictions <- predict(bayes, newdata=dtm.ts, type="class")
+
+predict(bayes, "trains",type="class")
 
 conf.mx <- table(class.ts, predictions)
 conf.mx 

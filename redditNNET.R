@@ -61,6 +61,10 @@ tm <- tm_map(tm, content_transformer(tolower))
 tm <- tm_map(tm, removePunctuation)
 tm <- tm_map(tm, stripWhitespace)
 tm <- tm_map(tm, removeNumbers)
+dat <- readLines("stop_pt.txt")
+tm <- tm_map(tm, removeWords, dat)
+rm(dat)
+tm <- tm_map(tm, removeWords, stopwords("portuguese"))
 dat <- readLines("/home/jawa/Downloads/d/erik-08-11.2/stop.txt")
 tm<- tm_map(tm, removeWords, dat)
 tm<- tm_map(tm, removeWords, c("deleted"))
@@ -104,61 +108,24 @@ df <- cbind(df, class)
 
 last.col <- ncol(df) - 1
 
-#require(imputation)
+dtm.tr <- df[1 : (as.numeric(num.train["cyberpunk"])    +
+                    as.numeric(num.train["brasil"])       +
+                    as.numeric(num.train["trains"])       +
+                    as.numeric(num.train["sad"])          +
+                    as.numeric(num.train["thepiratebay"])
+), 1:last.col]
 
-#for loop, without the for
-it1 <- 1
-it2 <- as.numeric(num.test["cyberpunk"])
-it3 <- 1
-it4 <- 0
-knn.dtm.tr <- df[it1:it2, 1:last.col]
-knn.class.tr <- rep('cyberpunk', as.numeric(num.test['cyberpunk']))
-
-c(it1, it2)
-
-
-it1 <- it1 + as.numeric(num.test["cyberpunk"])
-it2 <- it2 + as.numeric(num.test["brasil"])
-it3 <- it3 + as.numeric(num.train["cyberpunk"])
-it4 <- it4 + as.numeric(num.train["cyberpunk"]) + as.numeric(num.test["brasil"])
-knn.dtm.tr[it1:it2,] <- df[it3:it4, 1:last.col]
-knn.class.tr[it1:it2] <- rep('brasil', as.numeric(num.test['brasil']))
-
-c(it1, it2)
-
-
-it1 <- it1 + as.numeric(num.test["brasil"])
-it2 <- it2 + as.numeric(num.test["trains"])
-it3 <- it4 + 1
-it4 <- it4 + as.numeric(num.test["trains"])
-knn.dtm.tr[it1:it2,] <- df[it3:it4, 1:last.col]
-knn.class.tr[it1:it2] <- rep('trains', as.numeric(num.test['trains']))
-
-c(it1, it2)
-
-
-it1 <- it1 + as.numeric(num.test["trains"])
-it2 <- it2 + as.numeric(num.test["sad"])
-it3 <- it4 + 1
-it4 <- it4 + as.numeric(num.test["sad"])
-knn.dtm.tr[it1:it2,] <- df[it3:it4, 1:last.col]
-knn.class.tr[it1:it2] <- rep('sad', as.numeric(num.test['sad']))
-
-c(it1, it2)
-
-it1 <- it1 + as.numeric(num.test["sad"])
-it2 <- it2 + as.numeric(num.test["thepiratebay"])
-it3 <- it4 + 1
-it4 <- it4 + as.numeric(num.test["thepiratebay"])
-knn.dtm.tr[it1:it2,] <- df[it3:it4, 1:last.col]
-knn.class.tr[it1:it2] <- rep('thepiratebay', as.numeric(num.test['thepiratebay']))
-
-c(it1, it2)
+class.tr <- df[1 : (as.numeric(num.train["cyberpunk"])    +
+                      as.numeric(num.train["brasil"])       +
+                      as.numeric(num.train["trains"])       +
+                      as.numeric(num.train["sad"])          +
+                      as.numeric(num.train["thepiratebay"])
+), last.col + 1]
 
 
 #generating test data
 
-knn.dtm.ts <- df[(as.numeric(num.train["cyberpunk"])          +
+dtm.ts <- df[(as.numeric(num.train["cyberpunk"])          +
                     as.numeric(num.train["brasil"])             +
                     as.numeric(num.train["trains"])             +
                     as.numeric(num.train["sad"])                +
@@ -175,7 +142,7 @@ knn.dtm.ts <- df[(as.numeric(num.train["cyberpunk"])          +
                             as.numeric(num.test["thepiratebay"])
                     ), 1:last.col]
 
-knn.class.ts <- df[(as.numeric(num.train["cyberpunk"])          +
+class.ts <- df[(as.numeric(num.train["cyberpunk"])          +
                       as.numeric(num.train["brasil"])             +
                       as.numeric(num.train["trains"])             +
                       as.numeric(num.train["sad"])                +
@@ -193,10 +160,10 @@ knn.class.ts <- df[(as.numeric(num.train["cyberpunk"])          +
                       ), last.col + 1]
 
 #nnet.classifier <- nnet(dtm.tr, class.ind(class.tr),  size=2, rang=0.1, decay=5e-4, maxit=200)
-nnet.classifier <- nnet(knn.class.tr~., data=cbind(knn.dtm.tr,knn.class.tr),  size=2, rang=0.1, decay=5e-4, maxit=400)
+nnet.classifier <- nnet(class.tr~., data=cbind(dtm.tr,class.tr),  size=2, rang=0.1, decay=5e-4, maxit=200)
 
-predictions <- predict(nnet.classifier, knn.dtm.ts, type="class")
+predictions <- predict(nnet.classifier, dtm.ts, type="class")
 
-conf.mx <- table(knn.class.ts, predictions)
+conf.mx <- table(class.ts, predictions)
 conf.mx 
 

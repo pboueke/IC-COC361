@@ -99,7 +99,7 @@ df <- cbind(df, class)
 
 #==**KNN**=====================================================
 #generating training data for KNN clasifier
-#test and training vectors must have the same size
+#test and training vectors must have the same size for k-nn
 
 last.col <- ncol(df) - 1
 
@@ -179,10 +179,10 @@ knn.class.ts <- df[(as.numeric(num.train["cyberpunk"])          +
 
 knn.dtm.tr2 <- knn.dtm.tr
 
-#enfiar NOISE em knn.dtm.tr2
+#add noise
 for (i in 1:length(knn.dtm.tr2)){
   for (j in 1:length(knn.dtm.tr2[[i]])){
-    knn.dtm.tr2[[i]][[j]] <- knn.dtm.tr2[[i]][[j]] + runif(1,0,0.1)
+    knn.dtm.tr2[[i]][[j]] <- knn.dtm.tr2[[i]][[j]] + runif(1,0,0.001)
   }
 }
 
