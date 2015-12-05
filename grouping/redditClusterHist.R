@@ -1,8 +1,9 @@
-library('tm')
-library('class')
+library ('tm')
+library ('class')
 library ('nnet')
+library ('akmeans')
 
-setwd("/home/erikeft/Documents/Datasets/")
+setwd("/home/jawa/Downloads/d/erik-08-11.2/")
 
 docs <- c('redditcyberpunkknn','redditbrasilknn','reddittrains','redditsad','redditthepiratebay')
 num.train <- list(cyberpunk = 4812, brasil = 14510, trains = 803, sad = 190, thepiratebay = 471)
@@ -132,22 +133,44 @@ if(classHist)
   rm(clusterPiratebay)
 }
 
+df <- as.data.frame( dtm )
+
+write.table(df, file="df.csv", sep=",", row.names=FALSE)
+write.table(res$cluster, file="terms.csv", sep=",", row.names=FALSE, col.names=FALSE)
+
+#R is too slow for managing data like this
 
 if(clusterHist)
 {
   clusters <- list()
+  groups <- list()
   for(i in 1:groupsNumber)
   {
     clusters[[i]] <- c(1)
+    groups[[i]] <- c(1)
     counter <- 0
     for(j in 1:length(res$cluster))
     {
       if(i == res$cluster[[j]])
       {
         clusters[[i]][counter] <- j
+        sum = 0
+        for (k in 1:length(num.train))
+        {
+          sum = sum + as.numeric(num.train[k])
+          if (j < sum) {
+            break
+          }
+          if (is.na(k))
+          {
+            View(k)
+          }
+          groups[[i]][counter] = k
+        }
         counter <- counter + 1
       }
     }  
   }
 }
-TODO: FAZER A LISTA COM REGISTROS POR GRUPO
+
+
