@@ -75,7 +75,7 @@ dtm <- inspect(removeSparseTerms(dtm, 0.995))
 
 classHist <- TRUE
 clusterHist <- TRUE
-groupsNumber <- 3
+groupsNumber <- 5
 
 res <- norm.sim.ksc(dtm, groupsNumber)
 
@@ -135,10 +135,8 @@ if(classHist)
 
 df <- as.data.frame( dtm )
 
-write.table(df, file="df.csv", sep=",", row.names=FALSE)
-write.table(res$cluster, file="terms.csv", sep=",", row.names=FALSE, col.names=FALSE)
-
-#R is too slow for managing data like this
+#write.table(df, file="df.csv", sep=",", row.names=FALSE)
+#write.table(res$cluster, file="terms.csv", sep=",", row.names=FALSE, col.names=FALSE)
 
 if(clusterHist)
 {
@@ -149,6 +147,7 @@ if(clusterHist)
     clusters[[i]] <- c(1)
     groups[[i]] <- c(1)
     counter <- 0
+    aux <- 0
     for(j in 1:length(res$cluster))
     {
       if(i == res$cluster[[j]])
@@ -157,18 +156,15 @@ if(clusterHist)
         sum = 0
         for (k in 1:length(num.train))
         {
+          aux = k
           sum = sum + as.numeric(num.train[k])
           if (j < sum) {
             break
           }
-          if (is.na(k))
-          {
-            View(k)
-          }
-          groups[[i]][counter] = k
         }
+        groups[[i]][counter] = aux
         counter <- counter + 1
-      }
+        }
     }  
   }
 }
