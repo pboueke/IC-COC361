@@ -27,7 +27,7 @@ df <- as.data.frame( dtm )
 
 groupsNumber <- 5
 
-res <- norm.sim.ksc(dtm, groupsNumber)
+res <- norm.sim.ksc(dtm, groupsNumber, iter.max=1000)
 
 clusters <- list()
 for(i in 1:groupsNumber)
@@ -48,7 +48,7 @@ groupMatrix <- list()
 dfMatrices <- list()
 dtmS <- list()
 
-for (i in 1:1)#groupsNumber) 
+for (i in 1:groupsNumber) 
 {
   groupMatrix[[i]] <- matrix(NA, ncol=ncol(df), nrow=length(clusters[[i]]))
   
@@ -60,7 +60,7 @@ for (i in 1:1)#groupsNumber)
   names(dfMatrices[[i]]) <- names(df)
 }
 
-frequency <- colSums(as.matrix(dfMatrices[[3]]))
+frequency <- colSums(as.matrix(dfMatrices[[2]]))
 frequency <-sort(frequency, decreasing = TRUE)
 
 library(wordcloud)
