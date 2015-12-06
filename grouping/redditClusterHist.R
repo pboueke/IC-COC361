@@ -25,9 +25,9 @@ dt <-DocumentTermMatrix(tm, control=list(weighing=weightTfIdf, minWordLength=2, 
 dtm <- inspect(removeSparseTerms(dt, 0.997))
 df <- as.data.frame( dtm )
 
-groupsNumber <- 5
+groupsNumber <- 3
 
-res <- norm.sim.ksc(dtm, groupsNumber, iter.max=1000)
+res <- norm.sim.ksc(dtm, groupsNumber, iter.max=10000)
 
 clusters <- list()
 for(i in 1:groupsNumber)
@@ -60,14 +60,15 @@ for (i in 1:groupsNumber)
   names(dfMatrices[[i]]) <- names(df)
 }
 
-frequency <- colSums(as.matrix(dfMatrices[[2]]))
+#change dfMatrices index to change the group
+frequency <- colSums(as.matrix(dfMatrices[[1]]))
 frequency <-sort(frequency, decreasing = TRUE)
 
 library(wordcloud)
 
 words <- names(frequency)
 
-wordcloud(words[50:100], frequency[50:100])
+wordcloud(words[1:50], frequency[1:50])
 
 
 
